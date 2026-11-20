@@ -1,0 +1,65 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>DARKGPT CHAOS</title>
+<style>
+body{margin:0;background:#090909;color:white;font-family:Arial}
+header{background:#190000;padding:20px;text-align:center;border-bottom:2px solid #e00000}
+h1{color:#ff2525;margin:0}
+#chat{padding:15px;height:65vh;overflow:auto}
+.msg{padding:12px;margin:10px 0;border-radius:12px;white-space:pre-wrap}
+.user{background:#292929;text-align:right}
+.ai{background:#260b0b;border:1px solid #9b1111}
+footer{display:flex;padding:12px;gap:8px}
+input{flex:1;padding:14px;background:#222;color:white;border:1px solid #555;border-radius:10px}
+button{background:#d00000;color:white;border:0;padding:12px;border-radius:10px}
+</style>
+</head>
+<body>
+<header>
+<h1>☠ DARKGPT</h1>
+<p>CHAOS EDITION • AI ONLINE</p>
+</header>
+<div id="chat">
+<div class="msg ai">Aku DARKGPT. Siapa yang berani membangunkanku? 😈</div>
+</div>
+<footer>
+<input id="message" placeholder="Ketik sesuatu..." />
+<button onclick="send()">KIRIM</button>
+</footer>
+<script>
+async function send(){
+ const input=document.getElementById("message");
+ const chat=document.getElementById("chat");
+ const message=input.value.trim();
+ if(!message)return;
+ chat.innerHTML+=`<div class="msg user"></div>`;
+ chat.lastElementChild.textContent=message;
+ input.value="";
+ const loading=document.createElement("div");
+ loading.className="msg ai";
+ loading.textContent="DARKGPT sedang berpikir... 😈";
+ chat.appendChild(loading);
+ chat.scrollTop=chat.scrollHeight;
+ try{
+  const r=await fetch("/api/chat",{
+   method:"POST",
+   headers:{"Content-Type":"application/json"},
+   body:JSON.stringify({message})
+  });
+  const data=await r.json();
+  loading.textContent=data.reply||data.error||"Tidak ada jawaban.";
+ }catch(e){
+  loading.textContent="Tidak dapat terhubung ke server.";
+ }
+ chat.scrollTop=chat.scrollHeight;
+}
+document.getElementById("message").addEventListener("keydown",e=>{
+ if(e.key==="Enter")send();
+});
+</script>
+</body>
+</html>2
